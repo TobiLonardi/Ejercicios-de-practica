@@ -20,3 +20,23 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@api.route("/users", methods=["POST"])
+def postUser():
+    data=request.json
+    email = data.get("email",None)
+    name = data.get("name",None)
+    if not email or name:
+        return jsonify({"mensaje": "necesitas completar todas las casillas"})
+    elif User().query.filter_by(email=email).one_or_none() is not None:
+        return jsonify({"mensaje": "este mail ya esta registrado"})
+    user = User()
+    user.email = email
+    user.name = name
+    db.session.add(user)
+    try:
+        db.session.commit()
+        return jsonify("User created"), 200
+    except Exception as error:
+        db.session.rollaback()
+        return jsonify(f"Error: {error.args}"),500
