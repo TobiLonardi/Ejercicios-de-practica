@@ -40,3 +40,30 @@ def postUser():
     except Exception as error:
         db.session.rollaback()
         return jsonify(f"Error: {error.args}"),500
+
+@api.route("/users", methods=["GET"])
+def getAllUsers():
+    users=User().query.all()
+    return jsonify([user.serialize() for user in users]), 200
+
+@api.route("/users/<int:id>", methods=["GET"])
+def getUser(id):
+    user=User().query.filter_by(id=id).first()
+    if not user:
+        return jsonify({"msg":"no se encontro el usuario"}), 500
+    return jsonify({
+        "id":user.id,
+        "name":user.name,
+        "email": user.email
+    }), 200
+
+
+@api.route("/users/<int:id>", methods=["DELETE"])
+def deleteUser(id):
+    user=User().query.filter_by(id=id).first()
+    if not user:
+        return jsonify({"msg":"no se encontro el usuario"}), 500
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "user eliminated"})
+
