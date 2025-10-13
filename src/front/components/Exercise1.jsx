@@ -15,19 +15,19 @@ export const Exercise1 = () => {
 
     useEffect(() => {
         getAllUsers()
-            , []
-    })
+            
+    },[])
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        //postUser
+        postUser()
         setinput(defaultValue)
         console.log("submited")
 
     }
 
     function handleKeyDown(event){
-        if(event.key === "Enter"){
+        if(event.key === "Enter" && input.name.trim()!=="" && input.email.trim()!==""){
             handleSubmit(event)
         }
     }
@@ -42,6 +42,25 @@ export const Exercise1 = () => {
 
 
     async function getAllUsers() {
+        const response = await fetch(`${url}api/users`)
+        if(response.ok){
+            const data = await response.json();
+            setUsers(data)
+        }
+    }
+
+    async function postUser(){
+        const response = await fetch(`${url}/api/users`,{
+            method: "POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(input)
+        })
+        if(response.ok){
+            setinput(defaultValue)
+            getAllUsers()
+        }
 
     }
 

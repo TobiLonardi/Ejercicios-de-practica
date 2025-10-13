@@ -26,10 +26,10 @@ def postUser():
     data=request.json
     email = data.get("email",None)
     name = data.get("name",None)
-    if not email or name:
-        return jsonify({"mensaje": "necesitas completar todas las casillas"})
-    elif User().query.filter_by(email=email).one_or_none() is not None:
-        return jsonify({"mensaje": "este mail ya esta registrado"})
+    if email is None or name is None:
+        return jsonify({"mensaje": "necesitas completar todas las casillas"}), 401
+    elif User.query.filter_by(email=email).one_or_none() is not None:
+        return jsonify({"mensaje": "este mail ya esta registrado"}), 401
     user = User()
     user.email = email
     user.name = name
@@ -38,7 +38,7 @@ def postUser():
         db.session.commit()
         return jsonify("User created"), 200
     except Exception as error:
-        db.session.rollaback()
+        db.session.rollback()
         return jsonify(f"Error: {error.args}"),500
 
 @api.route("/users", methods=["GET"])
@@ -51,10 +51,11 @@ def getUser(id):
     user=User().query.filter_by(id=id).first()
     if not user:
         return jsonify({"msg":"no se encontro el usuario"}), 500
-    return jsonify({
-        "id":user.id,
+    return jsonify({"user":
+        
+       { "id":user.id,
         "name":user.name,
-        "email": user.email
+        "email": user.email}
     }), 200
 
 
