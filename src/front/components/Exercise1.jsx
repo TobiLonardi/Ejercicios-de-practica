@@ -71,6 +71,16 @@ export const Exercise1 = () => {
         }
     }
 
+    async function deleteUser(id){
+        const response = await fetch(`${url}/api/users/${id}`,
+            {method:"DELETE"}
+        )
+        if(response.ok){
+            getAllUsers()
+            console.log("borrado")
+        }
+    }
+
     return (
         <div className="body d-flex flex-column justify-content-center align-items-center">
             <h1>My Users</h1>
@@ -84,7 +94,7 @@ export const Exercise1 = () => {
                             users.map((item) =>
                                 <li key={item.id} className="border-bottom m-1">{item.name} {item.email}
                                     <span>
-                                        <i className="fa-solid fa-xmark"  onClick={() => deleteTask(item.id)}></i>
+                                        <i className="fa-solid fa-xmark"  onClick={() => deleteUser(item.id)}></i>
                                         <i className="fa-solid fa-magnifying-glass" onClick={()=>getUser(item.id)}></i>
                                     </span>
                                 </li>
