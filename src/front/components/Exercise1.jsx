@@ -63,6 +63,13 @@ export const Exercise1 = () => {
         }
 
     }
+    async function getUser(id){
+        const response = await fetch(`${url}/api/users/${id}`)
+        if(response.ok){
+            const data=await response.json();
+            console.log(data.user.name)
+        }
+    }
 
     return (
         <div className="body d-flex flex-column justify-content-center align-items-center">
@@ -76,7 +83,13 @@ export const Exercise1 = () => {
                         {
                             users.map((item) =>
                                 <li key={item.id} className="border-bottom m-1">{item.name} {item.email}
-                                    <span onClick={() => deleteTask(item.id)}><i className="fa-solid fa-xmark"></i></span></li>
+                                    <span>
+                                        <i className="fa-solid fa-xmark"  onClick={() => deleteTask(item.id)}></i>
+                                        <i className="fa-solid fa-magnifying-glass" onClick={()=>getUser(item.id)}></i>
+                                    </span>
+                                </li>
+
+                                    
                             )
                         }
                     </ul>
