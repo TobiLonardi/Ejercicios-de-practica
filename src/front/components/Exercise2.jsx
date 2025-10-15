@@ -5,11 +5,19 @@ export const Exercise2 = () =>{
     const theId=useParams()
 
     const defaultValue = {
-    "id": theId,
+    "id": "",
     "name": "",
     "email": ""
 }
     const {user,setUser}=useState(defaultValue)
+    const {loading,setLoading} = useState(true)
+    const {formData, setFormData} = useState({
+        "product_name":"",
+        "amount":"",
+        "user_id":theId
+    })
+
+    const url = import.meta.env.VITE_BACKEND_URL;
     return (
     <div className="container mt-5">
 
@@ -17,7 +25,7 @@ export const Exercise2 = () =>{
         <div className="card p-4 mb-5 shadow">
             <h4>Informacion del usuario</h4>
             <p>Email de usuario: {user["email"]}</p>
-            <p>Username del usuario: {user["username"]}</p>
+            <p>Username del usuario: {user["name"]}</p>
         </div>
 
         <div className="card p-4 mb-5 shadow">
