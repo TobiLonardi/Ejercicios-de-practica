@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Order
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -67,4 +67,43 @@ def deleteUser(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "user eliminated"})
+
+@api.route("/order",methods=["POST"])
+def postOrder():
+    data = request.json
+    product = data.get("product")
+    amount = data.get("amount")
+    user_id = data.get("user_id")
+    if product is None and amount is None and user_id is None:
+        return jsonify({"msg":"faltan datos"}), 500
+    order = Order(product=product,amount=amount,user_id = user_id)
+    db.session.add(order)
+    try:
+        db.session.commit()
+        return jsonify("order creado"), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg":f"error:{ str(e)}" })
+
+@api.route("/order",methods=["GET"])
+def getAllOrder():
+    order=Order.query.join(User).all()
+    return jsonify([{
+        "id":order.id,
+        "product":order.product,
+        "amount":order.amount,
+        "user_name":order.user.name
+    }])
+
+@api.route("/user/<int:the_id>/order",methods=["GET"])
+def getUserOrder(user_id):
+    order=Order.query.filter_by(user_id=user_id).all()
+    if order is None:
+        return jsonify("no se encontro ningun order"), 500
+    return jsonify([{
+        "id":order.id,
+        "product":order.product,
+        "amount":order.amount
+    }]), 200
+
 
