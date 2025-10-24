@@ -57,6 +57,39 @@ export const Exercise2 = () => {
             setLoading(false)
         }
     }
+
+    function handlechange(e){
+        setFormData({...formData,
+            [e.target.name]: e.target.value,
+        ["user_id"]:theId}
+
+        )
+    }
+
+    async function handleSubmit(event){
+        event.preventDefault();
+        try{
+            const response = await fetch(`${url}api/order`,{
+            method: "POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(formData)
+        })
+        if(response.ok){
+            setFormData({ "product_name": "","amount": "","user_id": theId})
+            fetchOrder()
+        }
+        else{
+            console.log("Error al cargar los datos")
+        }
+            
+        }
+        catch(err){
+            console.log(err)
+        }
+
+    }
     return (
         <div className="container mt-5">
 
@@ -77,7 +110,7 @@ export const Exercise2 = () => {
                             name="product_name"
                             className="form-control"
                             value={formData.product_name}
-                            onChange={handleChange}
+                            onChange={handlechange}
                             placeholder="Ej: Pizza Napolitana"
                             required
                         />
@@ -90,7 +123,7 @@ export const Exercise2 = () => {
                             name="amount"
                             className="form-control"
                             value={formData.amount}
-                            onChange={handleChange}
+                            onChange={handlechange}
                             placeholder="Ej: 2"
                             required
                         />
