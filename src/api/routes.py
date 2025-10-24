@@ -71,7 +71,7 @@ def deleteUser(id):
 @api.route("/order",methods=["POST"])
 def postOrder():
     data = request.json
-    product = data.get("product")
+    product = data.get("product_name")
     amount = data.get("amount")
     user_id = data.get("user_id")
     if product is None and amount is None and user_id is None:
@@ -95,15 +95,15 @@ def getAllOrder():
         "user_name":order.user.name
     }])
 
-@api.route("/user/<int:the_id>/order",methods=["GET"])
-def getUserOrder(user_id):
-    order=Order.query.filter_by(user_id=user_id).all()
-    if order is None:
+@api.route("/user/<int:Id>/order",methods=["GET"])
+def getUserOrder(Id):
+    orders=Order.query.filter_by(user_id=Id).all()
+    if not orders:
         return jsonify("no se encontro ningun order"), 500
     return jsonify([{
         "id":order.id,
-        "product":order.product,
+        "product_name":order.product,
         "amount":order.amount
-    }]), 200
+    }for order in orders]), 200
 
 

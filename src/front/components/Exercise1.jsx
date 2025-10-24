@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Link, useNavigate, Navigate } from "react-router-dom" 
 
 const defaultValue = {
     "id": 0,
@@ -12,6 +13,7 @@ export const Exercise1 = () => {
     const [users, setUsers] = useState([]);
 
     const url = import.meta.env.VITE_BACKEND_URL
+    const navigate = useNavigate()
 
     useEffect(() => {
         getAllUsers()
@@ -68,6 +70,7 @@ export const Exercise1 = () => {
         if(response.ok){
             const data=await response.json();
             console.log(data.user.name)
+            navigate("Exercise2/"+id)
         }
     }
 

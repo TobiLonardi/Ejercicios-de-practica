@@ -1,69 +1,70 @@
-import React, { useState,useEffect } from "react"
+import { useState,useEffect } from "react"
 import { useParams } from "react-router-dom";
 
 export const Exercise2 = () => {
-    const theId = useParams()
+    const {Id} = useParams()
 
     const defaultValue = {
         "id": "",
         "name": "",
         "email": ""
     }
-    const { user, setUser } = useState(defaultValue)
-    const {order,setOrder} = useState([])
-    const { loading, setLoading } = useState(true)
-    const { formData, setFormData } = useState({
+    const  [user, setUser]  = useState(defaultValue)
+    const [orders,setOrder] = useState([])
+    const  [loading, setLoading ]= useState(true)
+    const  [formData, setFormData] = useState({
         "product_name": "",
         "amount": "",
-        "user_id": theId
+        "user_id": Id
     })
 
 
     const url = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(()=>{
-        fetchOrder
-        fetchUser
-    },[theId])
+        fetchOrder();
+        fetchUser();
+    },[]);
 
-    async function fetchUser() {
-        try {
-            const response = await fetch(`${url}api/users/${theId}`)
-            if (response.ok) {
-                const data = await response.json()
-                setUser(data)
-            }
-            else {
-                console.log("error at loading user")
-            }
-        }
-        finally {
-            setLoading(false)
-        }
+    const fetchUser = async()=> {
+         try {
+             const response = await fetch(`${url}api/users/${Id}`)
+             if (response.ok) {
+                 const data = await response.json()
+                 setUser(data.user)
+                 console.log(`${data.user}`)
+             }
+             else {
+                 console.log("error at loading user")
+             }
+         }
+         finally {
+             setLoading(false)
+         }
     }
 
-    async function fetchOrder(){
-        try{
-            const response = await fetch(`${url}api/user/${theId}/order`)
-            if(response.ok){
+    const fetchOrder=async()=>{
+         try{
+             const response = await fetch(`${url}/api/user/${Id}/order`)
+             if(response.ok){
                 const data = await response.json()
-                setOrder(data)
-            }
-            else{
+                 setOrder(data)
+             }
+             else{
                 console.log("Error al cargar los datos de la orden")
-            }
-        }
-        finally{
-            setLoading(false)
-        }
+             }
+         }
+         finally{
+             setLoading(false)
+         }
     }
 
     function handlechange(e){
-        setFormData({...formData,
-            [e.target.name]: e.target.value,
-        ["user_id"]:theId}
+         setFormData({...formData,
+             [e.target.name]: e.target.value,
+         ["user_id"]:Id}
 
-        )
+         )
     }
 
     async function handleSubmit(event){
@@ -77,7 +78,7 @@ export const Exercise2 = () => {
             body:JSON.stringify(formData)
         })
         if(response.ok){
-            setFormData({ "product_name": "","amount": "","user_id": theId})
+            setFormData({ "product_name": "","amount": "","user_id": Id})
             fetchOrder()
         }
         else{
@@ -93,11 +94,11 @@ export const Exercise2 = () => {
     return (
         <div className="container mt-5">
 
-            <h2 className="text-center mb-4">Pedidos del Usuario #{theId}</h2>
+            <h2 className="text-center mb-4">Pedidos del Usuario # {`${Id}`} </h2>
             <div className="card p-4 mb-5 shadow">
                 <h4>Informacion del usuario</h4>
-                <p>Email de usuario: {user["email"]}</p>
-                <p>Username del usuario: {user["name"]}</p>
+                <p>Email de usuario: {user.email}</p>
+                <p>Username del usuario: {user.name}</p>
             </div>
 
             <div className="card p-4 mb-5 shadow">
@@ -109,7 +110,7 @@ export const Exercise2 = () => {
                             type="text"
                             name="product_name"
                             className="form-control"
-                            value={formData.product_name}
+                            value={formData?.product_name}
                             onChange={handlechange}
                             placeholder="Ej: Pizza Napolitana"
                             required
@@ -122,7 +123,7 @@ export const Exercise2 = () => {
                             type="number"
                             name="amount"
                             className="form-control"
-                            value={formData.amount}
+                            value={formData?.amount}
                             onChange={handlechange}
                             placeholder="Ej: 2"
                             required
